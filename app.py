@@ -7,6 +7,7 @@ from flask import Flask, request, jsonify, abort, render_template, url_for
 
 
 from oscar_schedules import Schedule , number_expected, getSchedules
+from oscar_schedules import __version__  as version
 from datetime import timedelta, datetime
 
 app = Flask(__name__ , static_folder="static", template_folder="templates" )
@@ -39,7 +40,7 @@ def proposewigosid():
 
 @app.route('/oscar_schedules')
 def oscar_schedules():
-    return render_template('index.html', variables= [ {'id':id , 'name':name} for id,name in variables_map.items() ] )
+    return render_template('index.html', variables= [ {'id':id , 'name':name} for id,name in variables_map.items() ] , version = version )
 
 
 @app.route('/number_expected/<string:wigos_id>', methods=['GET'])

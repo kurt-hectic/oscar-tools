@@ -11,7 +11,7 @@
 
     {% raw %}
     <script id="entry-template" type="text/x-handlebars-template">
-        <h3>Station: {{wigos_id}} ({{name}})</h3>
+        <h3>Station: {{wigos_id}} (<a href="https://oscar.wmo.int/surface/#/search/station/stationReportDetails/{{wigos_id}}">{{name}}</a>)</h3>
         <table>
         <tr><th>Variable</th><th>00h</th><th>6h</th><th>12h</th><th>18h</th><th>Schedules</th></tr>
         {{#each variables}}
@@ -129,7 +129,8 @@
     <img  class="loaderImage" src="{{ url_for('static', filename='img/ajax-loader.gif') }}" />
 
     
-    <div id="result"/>
+    <div id="result"></div>
     
+    <div style="position: absolute; bottom: 0;"><small>Using <a href="https://github.com/kurt-hectic/oscar-schedules">oscar_schedules</a> version {{version}}</small></div>
   </body>
 </html>
