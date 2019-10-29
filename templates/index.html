@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OSCAR/Surface schedules</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+
+    {% raw %}
+    <script id="entry-template" type="text/x-handlebars-template">
+        <h3>Station: {{wigos_id}}</h3>
+        <table>
+        <tr><th>Variable</th><th>00h</th><th>6h</th><th>12h</th><th>18h</th><th>Schedules</th></tr>
+        {{#each variables}}
+        <tr>
+            <td>{{var_id}}</td>
+            <td>{{nr_expected.h0}}</td>
+            <td>{{nr_expected.h6}}</td>
+            <td>{{nr_expected.h12}}</td>
+            <td>{{nr_expected.h18}}</td>
+            <td>{{#each schedules }} {{this}} , {{/each}}</td>
+
+        </tr>
+        
+        
+        {{/each}}
+        </table>
+      
+    </script>
+    {% endraw %}
+    
+        <script>
+        $( function() {
+            
+            // compile the template
+          
+            var source   = document.getElementById("entry-template").innerHTML;
+            var template = Handlebars.compile(source);
+            
+            //$( "#date" ).datepicker();
+            
+            $("#myform").submit(function(event){
+                event.preventDefault(); //prevent default action
+
+                $('.loaderImage').show();
+                $("#result").html( "" );
+                
+                var post_url = $(this).attr("action") + "/" + $("#wigosid").val()  ; //get form action url
+                var form_data = $(this).serialize(); //Encode form elements for submission
+                var date = $("#date").val() ;
+                var variables = [];
+                $( "#variables option:selected" ).each(function() {
+                  variables.push( $( this ).val() );
+                });             
+                var mydata = {  'date' :  date, 'variables' : variables.join(",") };
+                
+                console.log(mydata);
+                
+                $.get( post_url, mydata, function( response ) {
+                    $('.loaderImage').hide();
+                    console.log(response);
+                    var html    = template(response);
+                    console.log(html);
+                    $("#result").html( html );
+                }).fail( function() { 
+                    $("#result").html( '<span class="error" >Processing error</span>' );
+                } ) ;
+            });
+        } );
+        
+        
+        </script>
+        
+        <style>
+            .loaderImage {
+               display: none;
+            }
+            
+            table {
+              border-collapse: collapse;
+            }
+
+            table, th, td {
+              border: 1px solid black;
+            }
+            
+            td {
+                padding: 4px;
+            }
+            
+        </style>
+  </head>
+  <body>
+    <h1>OSCAR/Surface Schedule tool</h1>
+    <p>This tools allows to calculate the number of expected observations of variables from a station for the synoptic hour on a given day</p>
+    <form id="myform" action="/number_expected">
+        <input required type="text" name="wigosid" id="wigosid" placeholder="0-20000-0-12345" pattern="0-[0-9]+-[0-9]+-[a-zA-Z0-9]+" />
+        <label for="wigosid">WIGOS Station Identifier</label>
+        <input required value="1981-01-25" type="date" name="date" id="date"/>
+        <label for="date">Date</label>
+        
+        <select multiple="multiple" id="variables" name="variables[]" title="Shift click for multiselect"  >
+            <option selected="selected" value="ALL">ALL</option>
+        {% for variable in variables %}
+           <option value="{{variable.id}}">{{variable.name}} ({{variable.id}})</option> 
+        {% endfor %}
+        </select>
+        <label for="variables">Variables</label>
+        <input type="submit"/>
+        
+    </form>
+    
+    <h2>Result</h2>
+    
+    <img  class="loaderImage" src="{{ url_for('static', filename='img/ajax-loader.gif') }}" />
+
+    
+    <div id="result"/>
+    
+  </body>
+</html>

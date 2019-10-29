@@ -1,0 +1,92 @@
+# app.py
+import logging
+import os
+from flask import Flask, request, jsonify, abort, render_template, url_for
+
+
+from oscar_schedules import Schedule , number_expected, getSchedules
+from datetime import timedelta, datetime
+
+app = Flask(__name__ , static_folder="static", template_folder="templates" )
+
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+logger = logging.getLogger()
+
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+
+
+variables_map = {
+    224 : "Air temperature",
+    216 : "Atmospheric pressure",
+    251 : "Humidity",
+    309 : "Wind"
+}
+
+@app.route('/oscar_schedules')
+def oscar_schedules():
+    return render_template('index.html', variables= [ {'id':id , 'name':name} for id,name in variables_map.items() ] )
+
+
+@app.route('/number_expected/<string:wigos_id>', methods=['GET'])
+def nr_expected(wigos_id):
+    period = request.args.get("date", None)
+    variables = request.args.get("variables", None)
+    
+
+    if not len(wigos_id.split("-"))==4:
+        abort(400,"wigos id {} not in right format".format(wigos_id))
+
+    if not period:
+        abort(400,"need to supply period parameter")
+    
+    try:
+        period = datetime.strptime(period,"%Y-%m-%d")
+    except:
+        abort(400,"date format error")
+
+    variables = variables.split(',') if variables else []
+    logger.info("variables {}".format(variables))    
+    try:
+        variables = list(variables_map.keys()) if 'ALL' in variables else [ int(v) for v in variables ]
+    except:
+        abort(400,"variables need to be specified as intergers")
+    
+    # get schedules 
+    mydate = period # the date and hour for which we calculate the number of expected
+
+    # +- 3h interval around the date
+    lower_boundary = mydate - timedelta(hours=3) 
+    upper_boundary = mydate + timedelta(hours=3)
+
+    logger.info("checking number expected for station {} and variables {} interval {} to {}".format(wigos_id,variables,lower_boundary,upper_boundary))
+
+    
+
+    infos = getSchedules(wigos_id,  variables )
+
+    response = { "wigos_id" : wigos_id , "variables" : [] }
+
+    for var_id,info in infos.items():
+        schedules = info["schedules"]
+        name = info["variableName"]
+        
+        e = {}
+        for sh in [0,6,12,18]:
+            e["h{}".format(sh)] = number_expected(schedules,lower_boundary + timedelta(hours=sh) ,upper_boundary + timedelta(hours=sh))
+        
+        response["variables"].append( {  'var_id' : var_id , 'variable' : name , 'nr_expected' : e , 'schedules' : [ str(s) for s in schedules] } )
+        
+        #print("variable: {} expected: {} for schedules {}".format(var_mapping[var_id],e,  ",".join([ str(s) for s in schedules ])  ))
+
+    # Return the response in json format
+    return jsonify(response)
+
+
+# A welcome message to test our server
+@app.route('/')
+def index():
+    return "<h1>Welcome to our server !!</h1>"
+
+if __name__ == '__main__':
+    # Threaded option to enable multiple instances for multiple user access support
+    app.run(threaded=True, port=5000)
