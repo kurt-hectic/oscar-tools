@@ -1,6 +1,8 @@
 # app.py
 import logging
 import os
+import requests
+
 from flask import Flask, request, jsonify, abort, render_template, url_for
 
 
@@ -19,8 +21,21 @@ variables_map = {
     224 : "Air temperature",
     216 : "Atmospheric pressure",
     251 : "Humidity",
-    309 : "Wind"
+    309 : "Wind",
+    210 : "Precipitation",
+    12005 : "Horizontal wind direction",
+    12006 : "Horizontal wind speed"
 }
+
+@app.route('/propose_wigosid')
+def proposewigosid():
+    term = request.args.get("term", None)
+    
+    r = requests.get("https://oscar.wmo.int/surface/rest/api/stations/approvedStations/wigosIds?pageSize=100&q={}&page=1".format(term))
+    
+    wigos_ids = [ e["text"] for e in r.json() ]
+    
+    return jsonify( wigos_ids )
 
 @app.route('/oscar_schedules')
 def oscar_schedules():
@@ -63,10 +78,12 @@ def nr_expected(wigos_id):
     
 
     infos = getSchedules(wigos_id,  variables )
+    observations = infos["observations"]
+    name = infos["name"]
 
-    response = { "wigos_id" : wigos_id , "variables" : [] }
+    response = { "wigos_id" : wigos_id , "name" : name , "variables" : [] }
 
-    for var_id,info in infos.items():
+    for var_id,info in observations.items():
         schedules = info["schedules"]
         name = info["variableName"]
         

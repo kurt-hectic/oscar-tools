@@ -7,12 +7,11 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
     {% raw %}
     <script id="entry-template" type="text/x-handlebars-template">
-        <h3>Station: {{wigos_id}}</h3>
+        <h3>Station: {{wigos_id}} ({{name}})</h3>
         <table>
         <tr><th>Variable</th><th>00h</th><th>6h</th><th>12h</th><th>18h</th><th>Schedules</th></tr>
         {{#each variables}}
@@ -42,6 +41,14 @@
             var template = Handlebars.compile(source);
             
             //$( "#date" ).datepicker();
+            
+            $( "#wigosid" ).autocomplete({
+                source: "/propose_wigosid",
+                minLength: 2,
+                select: function( event, ui ) {
+                    //log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+                }
+            });
             
             $("#myform").submit(function(event){
                 event.preventDefault(); //prevent default action
@@ -92,6 +99,9 @@
                 padding: 4px;
             }
             
+            .ui-autocomplete-loading {
+                background: white url(  {{ url_for('static', filename='img/ui-anim_basic_16x16.gif') }} ) right center no-repeat;
+            }
         </style>
   </head>
   <body>
