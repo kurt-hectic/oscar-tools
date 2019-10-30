@@ -13,7 +13,7 @@
     <script id="entry-template" type="text/x-handlebars-template">
         <h3>Station: {{wigos_id}} (<a href="https://oscar.wmo.int/surface/#/search/station/stationReportDetails/{{wigos_id}}">{{name}}</a>)</h3>
         <table>
-        <tr><th>Variable</th><th>00h</th><th>6h</th><th>12h</th><th>18h</th><th>Schedules</th></tr>
+        <tr><th>Variable</th><th>0h: [21-3[</th><th>6h: [3-9[</th><th>12h: [9-15[</th><th>18h: [15-21[</th><th>Schedules and reporting intervals</th></tr>
         {{#each variables}}
         <tr>
             <td>{{var_id}}</td>
@@ -106,7 +106,7 @@
   </head>
   <body>
     <h1>OSCAR/Surface Schedule tool</h1>
-    <p>This tools allows to calculate the number of expected observations of variables from a station for the synoptic hour on a given day</p>
+    <p>This tools allows to calculate the number of expected observations of variables from a station for the synoptic intervals (see table below) on a given day.</p>
     <form id="myform" action="/number_expected">
         <input required type="text" name="wigosid" id="wigosid" placeholder="0-20000-0-12345" pattern="0-[0-9]+-[0-9]+-[a-zA-Z0-9]+" />
         <label for="wigosid">WIGOS Station Identifier</label>

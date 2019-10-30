@@ -8,6 +8,8 @@ from flask import Flask, request, jsonify, abort, render_template, url_for
 
 from oscar_schedules import Schedule , number_expected, getSchedules
 from oscar_schedules import __version__  as version
+#from oscar_views import getMonitoring
+
 from datetime import timedelta, datetime
 
 app = Flask(__name__ , static_folder="static", template_folder="templates" )
@@ -27,6 +29,13 @@ variables_map = {
     12005 : "Horizontal wind direction",
     12006 : "Horizontal wind speed"
 }
+
+#@app.route('/views/jenny')
+#def monitoring():
+#    def generate():
+#        for region in ["africa","antarctica","asia","europe","northCentralAmericaCaribbean","southAmerica","southWestPacific"]:
+#            yield getMonitoring(region) + '\n'
+#    return Response(generate(), mimetype='text/csv')
 
 @app.route('/propose_wigosid')
 def proposewigosid():
