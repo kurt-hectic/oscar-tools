@@ -2,12 +2,12 @@
 import logging
 import os
 import requests
+import pkg_resources
 
 from flask import Flask, request, jsonify, abort, render_template, url_for
 
 
 from oscar_schedules import Schedule , number_expected, getSchedules
-from oscar_schedules import __version__  as version
 #from oscar_views import getMonitoring
 
 from datetime import timedelta, datetime
@@ -18,7 +18,7 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 logger = logging.getLogger()
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
-
+version = pkg_resources.get_distribution('oscar-schedules').version
 
 variables_map = {
     224 : "Air temperature",
