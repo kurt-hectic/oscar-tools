@@ -41,9 +41,11 @@ variables_map = {
 def proposewigosid():
     term = request.args.get("term", None)
     
-    r = requests.get("https://oscar.wmo.int/surface/rest/api/stations/approvedStations/wigosIds?pageSize=100&q={}&page=1".format(term))
+    r = requests.get("https://oscar.wmo.int/surface/rest/api/stations/approvedStations/wigosIds?pageSize=100&q={}&page=1".format(term)).json()
     
-    wigos_ids = [ e["text"] for e in r.json() ]
+    wigos_ids = []
+    if r["total"] > 0 :
+        wigos_ids = [ e["text"] for e in r["resultList"] ]
     
     return jsonify( wigos_ids )
 
