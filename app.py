@@ -99,6 +99,9 @@ def nr_expected(wigos_id):
         schedules = info["schedules"]
         name = info["variableName"]
         
+        if len(schedules) == 0:
+            continue
+        
         e = {}
         for sh in [0,6,12,18]:
             e["h{}".format(sh)] = number_expected(schedules,lower_boundary + timedelta(hours=sh) ,upper_boundary + timedelta(hours=sh))

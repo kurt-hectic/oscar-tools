@@ -12,6 +12,8 @@
     {% raw %}
     <script id="entry-template" type="text/x-handlebars-template">
         <h3>Station: {{wigos_id}} (<a href="https://oscar.wmo.int/surface/#/search/station/stationReportDetails/{{wigos_id}}">{{name}}</a>)</h3>
+        
+        {{#if variables.length}}
         <table>
         <tr><th>Variable</th><th>0h: [21-3[</th><th>6h: [3-9[</th><th>12h: [9-15[</th><th>18h: [15-21[</th><th>Schedules and reporting intervals</th></tr>
         {{#each variables}}
@@ -22,12 +24,12 @@
             <td>{{nr_expected.h12}}</td>
             <td>{{nr_expected.h18}}</td>
             <td>{{#each schedules }} {{this}} , {{/each}}</td>
-
         </tr>
-        
-        
         {{/each}}
         </table>
+        {{else}}
+        <p>No active schedules</p>
+        {{/if}}
       
     </script>
     {% endraw %}
@@ -75,6 +77,7 @@
                     $("#result").html( html );
                 }).fail( function() { 
                     $("#result").html( '<span class="error" >Processing error</span>' );
+                    $('.loaderImage').hide();
                 } ) ;
             });
         } );
