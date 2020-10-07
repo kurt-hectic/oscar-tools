@@ -27,7 +27,12 @@ variables_map = {
     309 : "Wind",
     210 : "Precipitation",
     12005 : "Horizontal wind direction",
-    12006 : "Horizontal wind speed"
+    12006 : "Horizontal wind speed",
+    227 : "Temperature profile",
+    12000 : "Atmospheric pressure profile",
+    310 : "Upper wind",
+    256 : "Watervapor profile"
+    
 }
 
 #@app.route('/views/jenny')
