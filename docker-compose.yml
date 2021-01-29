@@ -5,4 +5,4 @@ services:
     ports: 
        - "8888:8080"
     environment:
-    - PROXY_URL="/schedules"
+    - PROXY_URL=/schedules

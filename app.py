@@ -11,18 +11,22 @@ from oscar_schedules import Schedule , number_expected, getSchedules
 
 from datetime import timedelta, datetime
 
-app = Flask(__name__ , static_folder="static", template_folder="templates" )
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+logger = logging.getLogger()
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
+
+app = Flask(__name__ , static_folder="static", template_folder="templates" )
 
 if "PROXY_URL" in os.environ:
     from flask_reverse_proxy_fix.middleware import ReverseProxyPrefixFix
-    app.config['REVERSE_PROXY_PATH'] = os.environ.get('PROXY_URL')
+    reverse_url = os.environ.get('PROXY_URL')
+    app.config['REVERSE_PROXY_PATH'] = reverse_url
     ReverseProxyPrefixFix(app)
+    logging.info("setting reverse proxy to {}".format(reverse_url))
+    
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
-logger = logging.getLogger()
 
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 version = pkg_resources.get_distribution('oscar-schedules').version
 
 variables_map = {
