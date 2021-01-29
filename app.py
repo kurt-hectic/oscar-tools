@@ -4,8 +4,7 @@ import os
 import requests
 import pkg_resources
 
-from flask import Flask, request, jsonify, abort, render_template, url_for
-
+from flask import Flask, request, jsonify, abort, render_template, url_for, Blueprint
 
 from oscar_schedules import Schedule , number_expected, getSchedules
 #from oscar_views import getMonitoring
@@ -13,6 +12,12 @@ from oscar_schedules import Schedule , number_expected, getSchedules
 from datetime import timedelta, datetime
 
 app = Flask(__name__ , static_folder="static", template_folder="templates" )
+
+
+if "PROXY_URL" in os.environ:
+    from flask_reverse_proxy_fix.middleware import ReverseProxyPrefixFix
+    app.config['REVERSE_PROXY_PATH'] = os.environ.get('PROXY_URL')
+    ReverseProxyPrefixFix(app)
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 logger = logging.getLogger()

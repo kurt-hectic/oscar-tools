@@ -45,7 +45,7 @@
             //$( "#date" ).datepicker();
             
             $( "#wigosid" ).autocomplete({
-                source: "/propose_wigosid",
+                source: "{{ url_for('propose_wigosid') }}",
                 minLength: 2,
                 select: function( event, ui ) {
                     //log( "Selected: " + ui.item.value + " aka " + ui.item.id );
@@ -110,7 +110,7 @@
   <body>
     <h1>OSCAR/Surface Schedule tool</h1>
     <p>This tools allows to calculate the number of expected observations of variables from a station for the synoptic intervals (see table below) on a given day.</p>
-    <form id="myform" action="/number_expected">
+    <form id="myform" action="{{ url_for('number_expected' }}">
         <input required type="text" name="wigosid" id="wigosid" placeholder="0-20000-0-12345" pattern="0-[0-9]+-[0-9]+-[a-zA-Z0-9]+" />
         <label for="wigosid">WIGOS Station Identifier</label>
         <input required value="1981-01-25" type="date" name="date" id="date"/>
