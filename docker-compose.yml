@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  oscar-tools:
+    build: .
+    ports: 
+       - "8888:8080"
+    environment:
+    - PROXY_URL="/schedules"
