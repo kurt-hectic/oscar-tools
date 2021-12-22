@@ -18,3 +18,7 @@ Build docker
 docker build -t oscar-tools .
 docker run --rm --name oscar-tools-container  oscar-tools
 ```
+Run with docker-compose (port 8888)
+```
+docker-compose up --build
+```

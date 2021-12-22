@@ -75,8 +75,8 @@
                     var html    = template(response);
                     console.log(html);
                     $("#result").html( html );
-                }).fail( function() { 
-                    $("#result").html( '<span class="error" >Processing error</span>' );
+                }).fail( function(jqXHR, textStatus, errorThrown) { 
+                    $("#result").html( '<span class="error" >Processing error: '+ jqXHR.responseText +'</span>' );
                     $('.loaderImage').hide();
                 } ) ;
             });

@@ -102,10 +102,12 @@ def nr_expected(wigos_id):
     logger.info("checking number expected for station {} and variables {} interval {} to {}".format(wigos_id,variables,lower_boundary,upper_boundary))
 
     
-
-    infos = getSchedules(wigos_id,  variables )
-    observations = infos["observations"]
-    name = infos["name"]
+    try:
+        infos = getSchedules(wigos_id,  variables )
+        observations = infos["observations"]
+        name = infos["name"]
+    except Exception as e:
+        abort(500,str(e))
 
     response = { "wigos_id" : wigos_id , "name" : name , "variables" : [] }
 
