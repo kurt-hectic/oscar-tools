@@ -59,7 +59,7 @@ def proposewigosid():
     
     wigos_ids = []
     if r["total"] > 0 :
-        wigos_ids = [ e["text"] for e in r["resultList"] ]
+        wigos_ids = [ e["wigosStationIdentifier"] for e in r["resultList"] ]
     
     return jsonify( wigos_ids )
 
@@ -72,6 +72,8 @@ def oscar_schedules():
 def nr_expected(wigos_id):
     period = request.args.get("date", None)
     variables = request.args.get("variables", None)
+    
+    logger.debug("begin {} {} {}".format(period,variables,wigos_id))
     
 
     if not len(wigos_id.split("-"))==4:
@@ -103,7 +105,10 @@ def nr_expected(wigos_id):
 
     
     try:
+        logging.debug("pre getSchedules")
         infos = getSchedules(wigos_id,  variables )
+        logging.debug("post getSchedules")
+
         observations = infos["observations"]
         name = infos["name"]
     except Exception as e:
@@ -127,6 +132,7 @@ def nr_expected(wigos_id):
         #print("variable: {} expected: {} for schedules {}".format(var_mapping[var_id],e,  ",".join([ str(s) for s in schedules ])  ))
 
     # Return the response in json format
+    logger.debug("end")
     return jsonify(response)
 
 
